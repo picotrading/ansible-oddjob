@@ -1,0 +1,25 @@
+---
+
+# Package to be installed (you can force a specific version here)
+oddjob_pkg: oddjob
+
+# Helper packages to be installed (you can force a specific version here)
+oddjob_helper_pkg: []
+
+# Default jobd config
+oddjob_config:
+  oddjobconfig:
+    'service name="com.redhat.oddjob"':
+      'object name="/com/redhat/oddjob"':
+        'interface name="com.redhat.oddjob"':
+          'method name="listall"':
+            'allow min_uid="0" max_uid="0"': null
+          'method name="list"':
+            allow: null
+          'method name="quit"':
+            'allow user="root"': null
+          'method name="reload"':
+            'allow user="root"': null
+    'include ignore_missing="yes"':
+      - /etc/oddjobd.conf.d/*.conf
+      - /etc/oddjobd-local.conf

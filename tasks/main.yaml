@@ -1,0 +1,50 @@
+---
+
+- name: Test distribution
+  assert:
+    that: >
+      ansible_os_family == "RedHat"
+
+- name: Install oddjob package for RedHat
+  yum:
+    name: "{{ oddjob_pkg }}"
+    state: present
+  notify:
+    - Restart oddjobd
+  tags:
+    - oddjob_pkg
+
+- name: Install oddjob helper package for RedHat
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: oddjob_helper_pkg
+  notify:
+    - Restart oddjobd
+  tags:
+    - oddjob_pkg
+
+- name: Configure oddjob service
+  template:
+    src: oddjobd.conf.j2
+    dest: /etc/oddjobd.conf
+  notify:
+    - Restart oddjobd
+  tags:
+    - oddjob_config
+
+- name: Make sure oddjobd service is running
+  service:
+    name: oddjobd
+    state: started
+  register: oddjob_service_started
+  tags:
+    - oddjob_pkg
+    - oddjob_config
+
+- name: Make sure oddjobd service is enabled
+  service:
+    name: oddjobd
+    enabled: yes
+  tags:
+    - oddjob_config

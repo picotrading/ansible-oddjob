@@ -1,0 +1,7 @@
+---
+
+- name: Restart oddjobd
+  service:
+    name: oddjobd
+    state: restarted
+  when: not oddjob_service_started.changed
