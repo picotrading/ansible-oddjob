@@ -5,6 +5,33 @@
     that: >
       ansible_os_family == "RedHat"
 
+# oddjob requires dbus and needs to restart it
+# https://digitalchild.info/oddjobd-fails-start-fixed/
+
+- name: Install dbus package for RedHat
+  yum:
+    name: dbus
+    state: present
+  notify:
+    - Restart messagebus
+  tags:
+    - dbus_pkg
+
+- name: Make sure messagebus service is running
+  service:
+    name: messagebus
+    state: started
+  register: messagebus_service_started
+  tags:
+    - dbus_pkg
+
+- name: Make sure messagebus service is enabled
+  service:
+    name: messagebus
+    enabled: yes
+  tags:
+    - dbus_config
+
 - name: Install oddjob package for RedHat
   yum:
     name: "{{ oddjob_pkg }}"
